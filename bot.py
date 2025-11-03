@@ -10,7 +10,7 @@ load_dotenv()
 
 # Настройки
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
-MINECRAFT_SERVER = '192.168.0.155:25565'  # Например: 'play.example.com:25565'
+MINECRAFT_SERVER = '178.151.99.221:25565'  # Например: 'play.example.com:25565'
 CHANNEL_ID = 1434496390616055820  # ID канала для уведомлений
 
 # Создание бота
@@ -239,4 +239,5 @@ if __name__ == '__main__':
     print(f'🎯 Интервал проверки: 60 секунд')
 
     bot.run(DISCORD_TOKEN)
+
 
