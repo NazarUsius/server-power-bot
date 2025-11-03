@@ -11,7 +11,7 @@ load_dotenv()
 # Настройки
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 MINECRAFT_SERVER = '192.168.0.155:25565'  # Например: 'play.example.com:25565'
-CHANNEL_ID = 1279387365323833397  # ID канала для уведомлений
+CHANNEL_ID = 1434496390616055820  # ID канала для уведомлений
 
 # Создание бота
 intents = discord.Intents.default()
@@ -227,4 +227,5 @@ if __name__ == '__main__':
     print('🚀 Запуск бота...')
     print(f'📋 Команды: /status, /maintenance, /ping')
     print(f'🎯 Интервал проверки: 60 секунд')
+
     bot.run(DISCORD_TOKEN)
