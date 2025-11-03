@@ -187,6 +187,16 @@ async def status(interaction: discord.Interaction):
 @app_commands.default_permissions(administrator=True)
 async def maintenance(interaction: discord.Interaction):
     """Переключает режим планового обслуживания"""
+    role_name = "Администратор" 
+    has_role = any(role.name == role_name for role in interaction.user.roles)
+
+    if not has_role:
+        await interaction.response.send_message(
+            "❌ У вас нет прав для использования этой команды.",
+            ephemeral=True
+        )
+        return
+        
     bot.maintenance_mode = not bot.maintenance_mode
 
     if bot.maintenance_mode:
@@ -229,3 +239,4 @@ if __name__ == '__main__':
     print(f'🎯 Интервал проверки: 60 секунд')
 
     bot.run(DISCORD_TOKEN)
+
