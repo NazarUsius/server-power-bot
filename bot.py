@@ -50,11 +50,30 @@ class AllianceMenu(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
 
-    @discord.ui.button(label="Создать альянс", style=discord.ButtonStyle.green)
-    async def alliance_create(self, interaction: discord.Interaction, button: discord.ui.Button):
+    @discord.ui.button(label="🏰 Создать альянс", style=discord.ButtonStyle.green)
+    async def create_alliance(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_message(
-            "Coolboy (create)",
-            ephermal=True
+            "Введите `/alliance_create <название>` чтобы создать альянс.",
+            ephemeral=True
+        )
+
+    @discord.ui.button(label="📜 Список альянсов", style=discord.ButtonStyle.blurple)
+    async def list_alliances(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message(
+            "📋 Здесь позже будет список всех альянсов (ты его добавишь сам 😉)",
+            ephemeral=True
+        )
+
+    @discord.ui.button(label="✉️ Мои приглашения", style=discord.ButtonStyle.gray)
+    async def show_invites(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message(
+            "📨 Тут будут твои активные приглашения.", ephemeral=True
+        )
+
+    @discord.ui.button(label="⚔️ Объявить войну", style=discord.ButtonStyle.red)
+    async def declare_war(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message(
+            "⚔️ Здесь позже появится меню для объявления войны.", ephemeral=True
         )
 
 
@@ -242,7 +261,16 @@ async def ping(interaction: discord.Interaction):
     await interaction.response.send_message(embed=embed, ephemeral=True)
     print(f'🏓 Команда /ping от {interaction.user} - задержка {latency}мс')
 
-#@bot.tree.command(name="alliance", description="Проверить работу бота")
+
+@bot.tree.command(name="alliance", description="Меню управления альянсами")
+async def alliance_menu(interaction: discord.Interaction):
+    """Главное меню альянсов"""
+    embed = discord.Embed(
+        title="🏰 Меню альянсов",
+        description="Выбери действие:",
+        color=discord.Color.gold()
+    )
+    await interaction.response.send_message(embed=embed, view=AllianceMenu(), ephemeral=True)
 
 
 # Запуск бота
