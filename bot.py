@@ -47,7 +47,8 @@ def check_server():
 
 
 class AllianceMenu(discord.ui.View):
-    super().__init__(timeout=None)
+    def __init__(self):
+        super().__init__(timeout=None)
 
     @discord.ui.button(label="Создать альянс", style=discord.ButtonStyle.green)
     async def alliance_create(self, interaction: discord.Interaction, button: discord.ui.Button):
