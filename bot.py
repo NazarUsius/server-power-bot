@@ -266,7 +266,7 @@ async def ping(interaction: discord.Interaction):
 async def alliance_menu(interaction: discord.Interaction):
     """Главное меню альянсов"""
     embed = discord.Embed(
-        title="🏰 Меню альянсов",
+        title="🏰 Мен альянсов",
         description="Выбери действие:",
         color=discord.Color.gold()
     )
