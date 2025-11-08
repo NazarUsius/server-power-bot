@@ -49,7 +49,7 @@ def check_server():
 class AllianceMenu(discord.ui.View):
     super().__init__(timeout=None)
 
-    @discord.ui.button(label="Создать альянс". style=discord.ButtonStyle.green)
+    @discord.ui.button(label="Создать альянс", style=discord.ButtonStyle.green)
     async def alliance_create(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_message(
             "Coolboy (create)",
@@ -249,4 +249,5 @@ if __name__ == '__main__':
     print('🚀 Запуск бота...')
     print(f'📋 Команды: /status, /maintenance, /ping')
     print(f'🎯 Интервал проверки: 60 секунд')
+
     bot.run(DISCORD_TOKEN)
