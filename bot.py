@@ -241,7 +241,7 @@ async def ping(interaction: discord.Interaction):
     await interaction.response.send_message(embed=embed, ephemeral=True)
     print(f'🏓 Команда /ping от {interaction.user} - задержка {latency}мс')
 
-@bot.tree.command(name="alliance", description="Проверить работу бота")
+#@bot.tree.command(name="alliance", description="Проверить работу бота")
 
 
 # Запуск бота
@@ -251,3 +251,4 @@ if __name__ == '__main__':
     print(f'🎯 Интервал проверки: 60 секунд')
 
     bot.run(DISCORD_TOKEN)
+
