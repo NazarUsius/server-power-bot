@@ -10,8 +10,8 @@ load_dotenv()
 
 # Настройки
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
-MINECRAFT_SERVER = '178.151.99.221:25565'  # Например: 'play.example.com:25565'
-CHANNEL_ID = 1434917655252435068  # ID канала для уведомлений
+MINECRAFT_SERVER = '192.168.0.155:25565'  # Например: 'play.example.com:25565'
+CHANNEL_ID = 1279387365323833397  # ID канала для уведомлений
 
 # Создание бота
 intents = discord.Intents.default()
@@ -44,6 +44,17 @@ def check_server():
     except Exception as e:
         print(f"[DEBUG] Ошибка проверки сервера: {e}")
         return False, None, None
+
+
+class AllianceMenu(discord.ui.View):
+    super().__init__(timeout=None)
+
+    @discord.ui.button(label="Создать альянс". style=discord.ButtonStyle.green)
+    async def alliance_create(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message(
+            "Coolboy (create)",
+            ephermal=True
+        )
 
 
 @bot.event
@@ -96,8 +107,11 @@ async def check_server_status():
                 embed.set_footer(text="🔧 Режим обслуживания активен")
 
         try:
-            await channel.send(embed=embed)
-            print('✅ Начальное сообщение отправлено')
+            if bot.maintenance_mode:
+                pass
+            else:
+                await channel.send(content="@everyone", embed=embed)
+                print('✅ Уведомление об отключении отправлено')
         except Exception as e:
             print(f'❌ Ошибка отправки сообщения: {e}')
         return
@@ -115,8 +129,11 @@ async def check_server_status():
             embed.set_footer(text="🔧 Режим обслуживания активен")
 
         try:
-            await channel.send(content="@everyone", embed=embed)
-            print('✅ Уведомление об отключении отправлено')
+            if bot.maintenance_mode:
+                pass
+            else:
+                await channel.send(content="@everyone", embed=embed)
+                print('✅ Уведомление об отключении отправлено')
         except Exception as e:
             print(f'❌ Ошибка отправки: {e}')
 
@@ -136,8 +153,11 @@ async def check_server_status():
             embed.set_footer(text="🔧 Режим обслуживания активен")
 
         try:
-            await channel.send(content="@everyone", embed=embed)
-            print('✅ Уведомление о включении отправлено')
+            if bot.maintenance_mode:
+                pass
+            else:
+                await channel.send(content="@everyone", embed=embed)
+                print('✅ Уведомление об отключении отправлено')
         except Exception as e:
             print(f'❌ Ошибка отправки: {e}')
 
@@ -187,22 +207,12 @@ async def status(interaction: discord.Interaction):
 @app_commands.default_permissions(administrator=True)
 async def maintenance(interaction: discord.Interaction):
     """Переключает режим планового обслуживания"""
-    role_name = "Администратор" 
-    has_role = any(role.name == role_name for role in interaction.user.roles)
-
-    if not has_role:
-        await interaction.response.send_message(
-            "❌ У вас нет прав для использования этой команды.",
-            ephemeral=True
-        )
-        return
-        
     bot.maintenance_mode = not bot.maintenance_mode
 
     if bot.maintenance_mode:
         embed = discord.Embed(
             title="🔧 Режим обслуживания",
-            description=f"Плановое отключение сервера `{MINECRAFT_SERVER}`\n⚠️ Уведомления продолжат работать",
+            description=f"Плановое отключение сервера `{MINECRAFT_SERVER}`",
             color=discord.Color.orange(),
             timestamp=datetime.utcnow()
         )
@@ -231,14 +241,12 @@ async def ping(interaction: discord.Interaction):
     await interaction.response.send_message(embed=embed, ephemeral=True)
     print(f'🏓 Команда /ping от {interaction.user} - задержка {latency}мс')
 
+@bot.tree.command(name="alliance", description="Проверить работу бота")
+
 
 # Запуск бота
 if __name__ == '__main__':
     print('🚀 Запуск бота...')
     print(f'📋 Команды: /status, /maintenance, /ping')
     print(f'🎯 Интервал проверки: 60 секунд')
-
     bot.run(DISCORD_TOKEN)
-
-
-
