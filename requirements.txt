@@ -2,3 +2,4 @@ discord
 mcstatus
 python-dotenv
 aiohttp
+asyncpg
