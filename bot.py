@@ -17,7 +17,7 @@ DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 MINECRAFT_SERVER = os.getenv("MINECRAFT_SERVER", "192.168.0.155:25565")
 CHANNEL_ID = int(os.getenv("CHANNEL_ID", "1279387365323833397"))
 DATABASE_URL = os.getenv("DATABASE_URL")
-BOT_VERSION = "1.0.2"
+BOT_VERSION = "1.1"
 SERVER_DISPLAY_NAME = "ПЧ"
 
 # ---------------- Intents & Bot ----------------
@@ -120,12 +120,13 @@ async def check_server_status():
     desc = f"Сервер `{SERVER_DISPLAY_NAME}` ({MINECRAFT_SERVER}) {'доступен' if is_online else 'недоступен'}."
 
     embed = discord.Embed(title=title, description=desc, color=embed_color, timestamp=datetime.now(timezone.utc))
-    embed.add_field(name="Проверка №", value=str(bot.check_count), inline=True)
-    embed.add_field(name="Maintenance", value=str(bot.maintenance_mode), inline=True)
+    embed.add_field(name="Режим планового тех. Обслуживания", value=str(bot.maintenance_mode), inline=True)
     if is_online and players_online is not None:
         embed.add_field(name="Игроки", value=f"{players_online}/{players_max}", inline=True)
+    
     try:
-        await channel.send(embed=embed)
+        if bot.maintenance_mode != True:
+            await channel.send(embed=embed)
     except Exception as e:
         print(f"[DEBUG] Ошибка отправки уведомления: {e}")
 
@@ -249,6 +250,77 @@ async def alliance(interaction: discord.Interaction):
     )
     embed.set_footer(text="Используй кнопки для взаимодействия.")
     await interaction.response.send_message(embed=embed, view=AllianceMenu(), ephemeral=True)
+
+
+@bot.tree.command(name="status", description="Проверка статуса Minecraft сервера")
+async def status_cmd(interaction: discord.Interaction):
+    print(f'ℹ️ Команда /status от {interaction.user}')
+
+    is_online, players_online, players_max = check_server()
+
+    if is_online:
+        embed = discord.Embed(
+            title="Сервер онлайн",
+            description=f"Сервер: `{MINECRAFT_SERVER}`",
+            color=discord.Color.green(),
+            timestamp=datetime.utcnow()
+        )
+        embed.add_field(name="Игроки", value=f"{players_online}/{players_max}")
+        embed.add_field(name="Проверок выполнено", value=str(bot.check_count))
+    else:
+        embed = discord.Embed(
+            title="Сервер оффлайн",
+            description=f"Сервер: `{MINECRAFT_SERVER}`",
+            color=discord.Color.red(),
+            timestamp=datetime.utcnow()
+        )
+        embed.add_field(name="Проверок выполнено", value=str(bot.check_count))
+
+    if bot.maintenance_mode:
+        embed.color = discord.Color.orange()
+        embed.set_footer(text="🔧 Режим обслуживания активен")
+
+    await interaction.response.send_message(embed=embed, ephemeral=True)
+
+
+@bot.tree.command(name="maintenance", description="Включение/выключение maintenance mode")
+@app_commands.default_permissions(administrator=True)
+async def maintenance_cmd(interaction: discord.Interaction):
+    """Переключает режим планового обслуживания"""
+    bot.maintenance_mode = not bot.maintenance_mode
+
+    if bot.maintenance_mode:
+        embed = discord.Embed(
+            title="🔧 Режим обслуживания",
+            description=f"Плановое отключение сервера `{MINECRAFT_SERVER}`",
+            color=discord.Color.orange(),
+            timestamp=datetime.utcnow()
+        )
+        print(f'🔧 Режим обслуживания ВКЛЮЧЕН пользователем {interaction.user}')
+    else:
+        embed = discord.Embed(
+            title="✅ Обслуживание завершено",
+            description=f"Мониторинг сервера `{MINECRAFT_SERVER}` продолжается",
+            color=discord.Color.green(),
+            timestamp=datetime.utcnow()
+        )
+        print(f'✅ Режим обслуживания ВЫКЛЮЧЕН пользователем {interaction.user}')
+
+    await interaction.response.send_message(embed=embed)
+
+
+@bot.tree.command(name="ping", description="Проверка работы бота")
+async def ping_cmd(interaction: discord.Interaction):
+    """Проверка работы бота"""
+    latency = round(bot.latency * 1000)
+    embed = discord.Embed(
+        title="🏓 Понг!",
+        description=f"Задержка: {latency}мс\nПроверок: {bot.check_count}",
+        color=discord.Color.blue()
+    )
+    await interaction.response.send_message(embed=embed, ephemeral=True)
+    print(f'🏓 Команда /ping от {interaction.user} - задержка {latency}мс')
+
 
 # ---------------- Ready ----------------
 @bot.event
